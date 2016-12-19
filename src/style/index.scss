@@ -1,7 +1,10 @@
+$view-show-transition-time: 0.2s;
+
 $word-span-bg-color: #009688;
 $word-span-color: #d2cece;
 
 $actino-sheet-action-space: 12px;
+$actino-sheet-action-color: rgba(125, 98, 98, 0.73);
 
 .bb-stage-wp {
   position: relative;
@@ -18,16 +21,18 @@ $actino-sheet-action-space: 12px;
   }
 
   &.is-active .bb-stage {
-    transition: opacity 0.25s ease-out;
+    transition: opacity $view-show-transition-time ease-out;
   }
 
   &.is-active .bb-stage--content {
+    overflow-y: auto;
     opacity: 1;
     visibility: visible;
     background: linear-gradient(to left, #DAE2F8, #D6A4A4);
   }
 
   &.bb-stage-wp.on-action .bb-stage--content {
+    transition: filter .2s ease-out;
     filter: blur(10px);
   }
 
@@ -51,7 +56,6 @@ $actino-sheet-action-space: 12px;
     left: 50%;
     transform: translate3d(-50%, -50%, 0);
     max-width: 800px;
-    max-height: 100%;
   }
 
   .bb-word {
@@ -82,8 +86,8 @@ $actino-sheet-action-space: 12px;
     cursor: pointer;
     min-width: 80px;
 
-    &.active {
-      color: #4d04d0;
+    &.active:not(.action-cancel) {
+      color: $actino-sheet-action-color;
       text-shadow: 0 2px 4px #4d04d0;
     }
   }

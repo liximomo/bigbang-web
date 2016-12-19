@@ -6,7 +6,7 @@ const TARGET = require('./env').TARGET;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const config = {
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'source-map',
 
   performance: { hints: false },
 

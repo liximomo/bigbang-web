@@ -21,14 +21,14 @@ const actionSheetV = () => `
     <span class="pickle action action-join" data-char="\n">行分割</span>
   </div>
   <div class="bb-action__menu-wp">
-    <div class="bb-action__menu-item action action-search" data-se="@null" >
+    <div class="bb-action__menu-item action action-search action-cancel" data-se="@null" >
       cancel
-    </div>
-    <div class="bb-action__menu-item action action-search" data-se="bd" >
-      百度
     </div>
     <div class="bb-action__menu-item action action-search" data-se="gg" >
       谷歌
+    </div>
+    <div class="bb-action__menu-item action action-search" data-se="bd" >
+      百度
     </div>
   </div>
 </div>
@@ -40,8 +40,9 @@ const wordV = (props) => `
 
 const stageWrapper = createELement(stageV);
 // const stage = stageWrapper.querySelector('.bb-stage.bb-stage--content');
-const wordsStage = stageWrapper.querySelector('.bb-view--words');
-const actionStage = stageWrapper.querySelector('.bb-view--action');
+const wordsView = stageWrapper.querySelector('.bb-view--words');
+const actionStage = stageWrapper.querySelector('.bb-stage--action');
+const actionView = stageWrapper.querySelector('.bb-view--action');
 
 function getPosition2Document(e) {
   let posx = 0;
@@ -65,16 +66,16 @@ function getPosition2Document(e) {
 
 /* eslint-disable no-param-reassign */
 function positonMenu(x, y, menu) {
-  const leftOffset = 140;
-  const topOffset = 30;
+  const leftOffset = 130;
+  const topOffset = 60;
   const clickCoordsX = x - leftOffset;
   const clickCoordsY = y - topOffset;
 
   const menuWidth = menu.offsetWidth + 4;
   const menuHeight = menu.offsetHeight + 4;
 
-  const documentWidth = document.body.clientWidth;
-  const documentHeight = document.body.clientHeight;
+  const documentWidth = actionStage.clientWidth;
+  const documentHeight = actionStage.clientHeight;
 
   if ((documentWidth - clickCoordsX) < menuWidth) {
     menu.style.left = `${documentWidth - menuWidth}px`;
@@ -150,36 +151,36 @@ on('.bb-view--words', 'contextmenu', '.bb-word', function(event) {
       wordSegmentFail(this);
       return;
     }
-    bigbang(wordsStage, this, words);
+    bigbang(wordsView, this, words);
   });
 }, false);
 
 // action value
-let joinChar;
-let searchEngine;
+const actinoStatus = {};
 
 function resetAction() {
-  joinChar = ' ';
-  searchEngine = null;
-  actionStage.innerHTML = actionSheetV();
+  actinoStatus.joinChar = ' ';
+  actinoStatus.searchEngine = null;
+  actionView.innerHTML = actionSheetV();
 }
 
+// event bind
 on('.bb-view--action', 'mouseover', '.action-join', function() {
   const cur = this;
-  Array.prototype.filter.call(actionStage.querySelectorAll('.action-join'), action =>
+  Array.prototype.filter.call(actionView.querySelectorAll('.action-join'), action =>
     action !== cur
   ).forEach(action => action.classList.remove('active'));
   cur.classList.add('active');
-  joinChar = cur.dataset.char;
+  actinoStatus.joinChar = cur.dataset.char;
 }, false);
 
 on('.bb-view--action', 'mouseover', '.action-search', function() {
   const cur = this;
-  Array.prototype.filter.call(actionStage.querySelectorAll('.action-search'), action =>
+  Array.prototype.filter.call(actionView.querySelectorAll('.action-search'), action =>
     action !== cur
   ).forEach(action => action.classList.remove('active'));
   cur.classList.add('active');
-  searchEngine = cur.dataset.se;
+  actinoStatus.searchEngine = cur.dataset.se;
 }, false);
 
 function getAllSelectText() {
@@ -195,28 +196,24 @@ export function actionOn(opt) {
   resetAction();
 
   const pos = getPosition2Document(opt);
-  positonMenu(pos.x, pos.y, actionStage);
+  positonMenu(pos.x, pos.y, actionView);
   stageWrapper.classList.add('on-action');
 }
 
 export function actionOff() {
   stageWrapper.classList.remove('on-action');
-  return {
-    joinChar,
-    searchEngine,
-    textArray: getAllSelectText(),
-  };
+  return actinoStatus;
 }
 
 export function show({ words }) {
-  wordsStage.innerHTML = words2HtmlText(words);
+  wordsView.innerHTML = words2HtmlText(words);
   stageWrapper.classList.add('is-active');
 }
 
 export function hide() {
   stageWrapper.classList.remove('is-active');
   const selectedTextArray = getAllSelectText();
-  wordsStage.innerHTML = '';
+  wordsView.innerHTML = '';
   actionOff();
   return selectedTextArray;
 }

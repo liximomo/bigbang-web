@@ -31,8 +31,8 @@ const option = {
     mac: KEY_CMD,
   },
   actionKey: KEY_ALT,
-  wordJoinChat: ' ',
-  delay: 600,
+  defaultJoinChar: ' ',
+  delay: 500,
 };
 
 let clientX;
@@ -44,6 +44,8 @@ const state = {
   isActive: false, // 被激活,
   onAction: false, // 是否处于动作面版
   selectedTexts: [], // 选择的文字
+  searchEngine: null,
+  joinChar: option.defaultJoinChar,
 };
 
 function isTriggerKey(keycode) {
@@ -112,6 +114,48 @@ function update_mouse_pos(event) {
   clientY = event.clientY;
 }
 
+function clearPreviousState() {
+  state.selectedTexts = [];
+  state.searchEngine = null,
+  state.joinChar = option.defaultJoinChar;
+}
+
+// 退出视图
+function quit() {
+  state.isActive = false;
+  state.onAction = false;
+
+  // the trigger is not intent to, just cancel
+  if (state.curTask) {
+    clearTimeout(state.curTask);
+    state.curTask = null;
+  }
+
+  // action already handle the text
+  // just hide and return
+  if (state.selectedTexts.length) {
+    hide();
+    return;
+  }
+
+  // fallback to default process
+  state.selectedTexts = hide();
+  if (state.selectedTexts.length) {
+    const selectedText = state.selectedTexts.join(state.joinChar)
+    copyTextToClipboard(selectedText);
+    switch (state.searchEngine) {
+      case 'bd':
+        baiduSearch(selectedText);
+        break;
+      case 'gg':
+        googleSearch(selectedText);
+        break;
+      default:
+        // do nothing
+    }
+  }
+}
+
 function keyDown(event) {
   if (state.curTask) {
     return;
@@ -130,8 +174,7 @@ function keyDown(event) {
 
   if (isTriggerKey(event.keyCode)) {
     state.curTask = setTimeout(() => {
-      // clear previous text
-      state.selectedTexts = [];
+      clearPreviousState();
 
       const curNode = document.elementFromPoint(clientX, clientY);
       const words = traversDownNode(curNode).map(getNodeText).filter(text =>
@@ -147,45 +190,18 @@ function keyDown(event) {
 
 function keyUp(event) {
   if (isTriggerKey(event.keyCode)) {
-    state.isActive = false;
-    state.onAction = false;
-
-    // the trigger is not intent to, just cancel
-    if (state.curTask) {
-      clearTimeout(state.curTask);
-      state.curTask = null;
-    }
-
-    // action already handle the text
-    // just hide and return
-    if (state.selectedTexts.length) {
-      hide();
-      return;
-    }
-
-    // fallback to default process
-    state.selectedTexts = hide();
-    if (state.selectedTexts.length) {
-      copyTextToClipboard(state.selectedTexts.join(option.wordJoinChat));
-    }
+    quit();
   } else if (isActionKey(event.keyCode)) {
     state.onAction = false;
     const actionInfo = actionOff();
-    state.selectedTexts = actionInfo.textArray;
-    const text = state.selectedTexts.join(actionInfo.joinChar);
-    copyTextToClipboard(text);
-    switch (actionInfo.searchEngine) {
-      case 'bd':
-        baiduSearch(text);
-        break;
-      case 'gg':
-        googleSearch(text);
-        break;
-      default:
-        // do nothing
-    }
+    state.joinChar = actionInfo.joinChar;
+    state.searchEngine = actionInfo.searchEngine;
+    // state.selectedTexts = actionInfo.textArray;
   }
 }
+
+//  can't copy success when window on blur because it's impossible to create selection
+// window.addEventListener('blur', quit, false);
 
 document.addEventListener('mousemove', update_mouse_pos, false);
 document.addEventListener('keyup', keyUp, false);
