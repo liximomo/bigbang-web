@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const pathCfg = require('./path.cfg');
 const NODE_ENV = require('./env').NODE_ENV;
 const TARGET = require('./env').TARGET;
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const config = {
   devtool: 'source-map',
@@ -57,14 +58,18 @@ const config = {
         'NODE_ENV': JSON.stringify(NODE_ENV.PRODUCTION),
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        warnings: false,
-        drop_console: false,
-        drop_debugger: true,
-      },
-      sourceMap: true,
+    new HtmlWebpackPlugin({
+      template: `${pathCfg.projectPath}/index.html`,
+      filename: 'index.html'
     }),
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compressor: {
+    //     warnings: false,
+    //     drop_console: false,
+    //     drop_debugger: true,
+    //   },
+    //   sourceMap: true,
+    // }),
   ],
 };
 

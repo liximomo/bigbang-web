@@ -94,24 +94,36 @@ function getWord(wordSpan) {
   return wordSpan.textContent;
 }
 
-function words2HtmlText(words) {
+function words2HtmlText(words, activeIndex = 0) {
   return words.map((word, index) =>
     wordV({
       text: word,
-      selected: index === 0,
+      selected: index === activeIndex,
     })
   ).join('');
 }
 
+function wordSegmentDone(textSpan) {
+  textSpan.classList.remove('busy');
+}
+
+function wordSegmentFail(textSpan) {
+  textSpan.classList.add('shake');
+  textSpan.addEventListener('animationend', () => textSpan.classList.remove('shake'), false);
+}
+
+function wordSegmentBusy(textSpan) {
+  textSpan.classList.add('busy');
+}
+
 function bigbang(wordsContainer, textSpan, words) {
   if (words.length <= 1) {
-    textSpan.classList.add('shake');
-    textSpan.addEventListener('animationend', () => textSpan.classList.remove('shake'), false);
+    wordSegmentFail(textSpan);
     return;
   }
   // eslint-disable-next-line no-param-reassign
   textSpan.style.display = 'none';
-  const wordSpans = createELement(words2HtmlText(words));
+  const wordSpans = createELement(words2HtmlText(words, -1));
   wordSpans.forEach(wordSpan => wordsContainer.insertBefore(wordSpan, textSpan));
   textSpan.parentNode.removeChild(textSpan);
 }
@@ -130,14 +142,16 @@ on('.bb-view--words', 'contextmenu', '.bb-word', function(event) {
     return;
   }
   isRequsetPending = true;
-  try {
-    wordSegment(getWord(this), words => {
-      bigbang(wordsStage, this, words);
-      isRequsetPending = false;
-    });
-  } finally {
+  wordSegmentBusy(this);
+  wordSegment(getWord(this), (err, words) => {
+    wordSegmentDone(this);
     isRequsetPending = false;
-  }
+    if (err) {
+      wordSegmentFail(this);
+      return;
+    }
+    bigbang(wordsStage, this, words);
+  });
 }, false);
 
 // action value

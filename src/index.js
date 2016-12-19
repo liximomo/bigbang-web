@@ -1,8 +1,8 @@
 /* global */
-import 'babel-polyfill';
+import './style/index.scss';
+
 import { show, hide, actionOn, actionOff } from './ui';
-import { getNodeText } from './util';
-import { copyTextToClipboard } from './service';
+import { getNodeText, copyTextToClipboard } from './util';
 import { googleSearch, baiduSearch } from './action';
 
 const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;

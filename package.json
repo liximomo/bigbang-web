@@ -2,28 +2,31 @@
   "name": "bigbang-web",
   "version": "1.0.0",
   "scripts": {
+    "prestart": "rm -rf ./dist",
     "start": "NODE_ENV=development node ./server.js",
-    "pub": "NODE_ENV=production node ./server.js"
+    "build": "NODE_ENV=production node ./server.js",
+    "deploy": "gh-pages -d dist"
   },
   "description": "bigbang on web",
   "main": "index.js",
   "author": "lixi",
   "license": "MIT",
   "devDependencies": {
+    "autoprefixer": "^6.5.4",
     "babel-core": "^6.21.0",
     "babel-loader": "^6.2.10",
+    "babel-plugin-transform-object-rest-spread": "^6.20.2",
     "babel-preset-env": "^1.1.4",
     "css-loader": "^0.26.1",
     "express": "^4.14.0",
+    "gh-pages": "^0.12.0",
+    "html-webpack-plugin": "^2.24.1",
     "node-sass": "^4.0.0",
+    "postcss-loader": "^1.2.1",
     "sass-loader": "^4.1.0",
     "style-loader": "^0.13.1",
     "webpack": "beta",
     "webpack-hot-middleware": "^2.13.2",
     "webpack-middleware": "^1.5.1"
-  },
-  "dependencies": {
-    "babel-plugin-transform-object-rest-spread": "^6.20.2",
-    "babel-polyfill": "^6.20.0"
   }
 }

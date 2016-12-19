@@ -1,0 +1,180 @@
+$word-span-bg-color: #009688;
+$word-span-color: #d2cece;
+
+$actino-sheet-action-space: 12px;
+
+.bb-stage-wp {
+  position: relative;
+
+  .bb-stage {
+    opacity: 0;
+    visibility: hidden;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  &.is-active .bb-stage {
+    transition: opacity 0.25s ease-out;
+  }
+
+  &.is-active .bb-stage--content {
+    opacity: 1;
+    visibility: visible;
+    background: linear-gradient(to left, #DAE2F8, #D6A4A4);
+  }
+
+  &.bb-stage-wp.on-action .bb-stage--content {
+    filter: blur(10px);
+  }
+
+  &.bb-stage-wp.on-action .bb-stage--action {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .bb-view {
+    position: absolute;
+  }
+
+  .bb-view--action {
+    position: absolute;
+    box-shadow: 0 0 30px -5px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    border-radius: 5px;
+  }
+
+  .bb-view--words {
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+    max-width: 800px;
+    max-height: 100%;
+  }
+
+  .bb-word {
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 5px;
+    line-height: 1.5;
+    margin: 5px;
+    box-shadow: 0 0 1px 1px rgba(142, 132, 131, 0.55);
+
+    &.is-selected {
+      background: $word-span-bg-color;
+      color: $word-span-color;
+    }
+  }
+
+  .bb-action-container,
+  .bb-action__menu-wp {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+  }
+
+  .action {
+    cursor: pointer;
+    min-width: 80px;
+
+    &.active {
+      color: #4d04d0;
+      text-shadow: 0 2px 4px #4d04d0;
+    }
+  }
+
+  .pickle {
+    margin: $actino-sheet-action-space 0;
+    padding: 0 $actino-sheet-action-space;
+    text-align: center;
+
+    & + .pickle  {
+      border-left: 1px solid rgba(255, 255, 255, 0.39);
+    }
+
+    &:first-child {
+      border-right-width: 0;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+  }
+
+  .bb-action__pickle-wp {
+    display: flex;
+    justify-content: center;
+  }
+
+  .bb-action__menu-wp {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+  }
+
+  .bb-action__menu-item {
+    margin: 0 $actino-sheet-action-space*2;
+    padding: $actino-sheet-action-space 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.39);
+    text-align: center;
+  }
+
+  .busy {
+    animation-name: pulse;
+    animation-fill-mode: both;
+    animation-timing-function: ease-in-out;
+    animation-duration: 1.2s;
+    animation-iteration-count: infinite;
+  }
+
+  .shake {
+    animation-timing-function: ease-in-out;
+    animation-name: headShake;
+    animation-duration: 0.6s;
+    animation-fill-mode: both;
+  }
+}
+
+@keyframes headShake {
+  0% {
+    transform: translateX(0);
+  }
+  6.5% {
+    transform: translateX(-6px) rotateY(-9deg);
+  }
+  18.5% {
+    transform: translateX(5px) rotateY(7deg);
+  }
+  31.5% {
+    transform: translateX(-3px) rotateY(-5deg);
+  }
+  43.5% {
+    transform: translateX(2px) rotateY(3deg);
+  }
+  50% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  from {
+    transform: scale3d(1, 1, 1);
+  }
+
+  50% {
+    transform: scale3d(1.05, 1.05, 1.05);
+  }
+
+  to {
+    transform: scale3d(1, 1, 1);
+  }
+}

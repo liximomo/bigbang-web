@@ -6,7 +6,7 @@ const config = {
   projectPath,
   src: `${projectPath}/src`,
   output: `${projectPath}/dist`,
-  public: '/static/',
+  public: '/bigbang-web/',
 };
 
 config.es6 = [

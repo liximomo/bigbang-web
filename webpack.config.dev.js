@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const pathCfg = require('./path.cfg');
 const NODE_ENV = require('./env').NODE_ENV;
 const TARGET = require('./env').TARGET;
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const config = {
   devtool: 'cheap-module-eval-source-map',
@@ -58,6 +59,10 @@ const config = {
         'TARGET': JSON.stringify(TARGET.BROWSER),
         'NODE_ENV': JSON.stringify(NODE_ENV.development),
       }
+    }),
+    new HtmlWebpackPlugin({
+      template: `${pathCfg.projectPath}/index.html`,
+      filename: 'index.html'
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),

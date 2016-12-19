@@ -34,8 +34,6 @@ if (isProd) {
 
 app.use(pathCfg.public, Express.static(pathCfg.output));
 
-app.use(Express.static(pathCfg.projectPath));
-
 const port = process.env.PORT || 8080;
 
 app.listen(port, '0.0.0.0', (error) => {
