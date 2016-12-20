@@ -2,7 +2,7 @@
 // @name         big-bang
 // @homepageURL  https://github.com/liximomo/bigbang-web
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.0.2
 // @description  bigbang word segment and smart copy
 // @author       liximomo
 // @match        http*://*/*
