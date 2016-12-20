@@ -139,7 +139,7 @@ function activate() {
   const words = traversDownNode(curNode).map(textNode).filter(({ text }) =>
     text !== '' /* none empty textnode */
   );
-  
+
   if (!words.length) {
     // 没有文字可以选择，什么都不做
   } else if (words.length === 1) {
