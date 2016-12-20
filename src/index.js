@@ -121,7 +121,7 @@ function update_mouse_pos(event) {
 function clearPreviousState() {
   state.curTask = null;
   state.selectedTexts = [];
-  state.searchEngine = null,
+  state.searchEngine = null;
   state.joinChar = option.defaultJoinChar;
 }
 
@@ -172,13 +172,6 @@ function quit() {
   if (state.curTask) {
     clearTimeout(state.curTask);
     state.curTask = null;
-  }
-
-  // action already handle the text
-  // just hide and return
-  if (state.selectedTexts.length) {
-    hide();
-    return;
   }
 
   // fallback to default process
@@ -234,7 +227,6 @@ function keyUp(event) {
     const actionInfo = actionOff();
     state.joinChar = actionInfo.joinChar;
     state.searchEngine = actionInfo.searchEngine;
-    // state.selectedTexts = actionInfo.textArray;
   }
 }
 

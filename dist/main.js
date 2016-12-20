@@ -2,12 +2,13 @@
 // @name         big-bang
 // @homepageURL  https://github.com/liximomo/bigbang-web
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  bigbang word segment and smart copy
 // @author       liximomo
 // @match        http*://*/*
 // @run-at       document-end
 // @grant        GM_xmlhttpRequest
+// @grant        GM_setClipboard
 // @connect      api.ltp-cloud.com
 // ==/UserScript==
 
@@ -147,6 +148,11 @@ function on(elSelector, eventName, selector, handler, useCapture) {
 }
 
 function copyTextToClipboard(text) {
+  if (typeof GM_setClipboard !== 'undefined') {
+    GM_setClipboard(text, 'text');
+    return;
+  }
+
   var textArea = document.createElement('textarea');
   //
   // *** This styling is an extra step which is likely not required. ***
@@ -352,7 +358,8 @@ function update_mouse_pos(event) {
 function clearPreviousState() {
   state.curTask = null;
   state.selectedTexts = [];
-  state.searchEngine = null, state.joinChar = option.defaultJoinChar;
+  state.searchEngine = null;
+  state.joinChar = option.defaultJoinChar;
 }
 
 function textNode(node) {
@@ -404,13 +411,6 @@ function quit() {
   if (state.curTask) {
     clearTimeout(state.curTask);
     state.curTask = null;
-  }
-
-  // action already handle the text
-  // just hide and return
-  if (state.selectedTexts.length) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__ui__["c" /* hide */])();
-    return;
   }
 
   // fallback to default process
@@ -467,7 +467,6 @@ function keyUp(event) {
     var actionInfo = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__ui__["e" /* actionOff */])();
     state.joinChar = actionInfo.joinChar;
     state.searchEngine = actionInfo.searchEngine;
-    // state.selectedTexts = actionInfo.textArray;
   }
 }
 

@@ -56,6 +56,11 @@ export function on(elSelector, eventName, selector, handler, useCapture) {
 }
 
 export function copyTextToClipboard(text) {
+  if (typeof GM_setClipboard !== 'undefined') {
+    GM_setClipboard(text, 'text');
+    return;
+  }
+
   const textArea = document.createElement('textarea');
   //
   // *** This styling is an extra step which is likely not required. ***
