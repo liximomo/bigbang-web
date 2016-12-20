@@ -52,7 +52,11 @@ function xhr(url, params, cb) {
     timeout: TIMEOUT,
     responseType: 'json',
     onload: data => {
-      cb(data);
+      if (data.status === 200) {
+        cb(null, data.response);
+      } else {
+        cb(new Error('service is not available'));
+      }
     },
     onerror: () => cb(new Error('fail')),
     ontimeout: () => cb(new Error('timeout')),
