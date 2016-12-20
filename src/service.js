@@ -2,12 +2,19 @@
 import { flatten, param } from './util';
 import api_key from './api_key';
 
+const isProd = process.env.NODE_ENV === 'production';
+
 const service_host = 'http://api.ltp-cloud.com/analysis/';
 
 const TIMEOUT = 1000 * 3;
 
 const head = document.getElementsByTagName('head')[0];
-function jsonp(url, params, cb) {
+function callApi(url, params, cb) {
+  if (isProd) {
+    xhr(url, params, cb);
+    return;
+  }
+
   let err = null;
   let timeout = null;
   
@@ -27,6 +34,7 @@ function jsonp(url, params, cb) {
   script.onload = callbackWrapper();
   script.onerror = callbackWrapper(() => cb(new Error('fail')));
   timeout = setTimeout(() => {
+    window.ltpCloudCallback = a => null;
     script.onload = null;
     script.onerror = null;
     head.removeChild(script);
@@ -36,8 +44,23 @@ function jsonp(url, params, cb) {
   head.appendChild(script);
 }
 
+function xhr(url, params, cb) {
+  const urlParam = param(params);
+  GM_xmlhttpRequest({
+    method: 'GET',
+    url: `${url}?${urlParam}`,
+    timeout: TIMEOUT,
+    responseType: 'json',
+    onload: data => {
+      cb(data);
+    },
+    onerror: () => cb(new Error('fail')),
+    ontimeout: () => cb(new Error('timeout')),
+  });
+}
+
 export function wordSegment(text, cb) {
-  jsonp(service_host, {
+  callApi(service_host, {
     api_key,
     text,
     pattern: 'ws',

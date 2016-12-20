@@ -1,8 +1,9 @@
 /* global */
 import './style/index.scss';
 
-import { show, hide, actionOn, actionOff } from './ui';
-import { getNodeText, copyTextToClipboard } from './util';
+import { show, hide, hint, actionOn, actionOff } from './ui';
+import { copyTextToClipboard } from './util';
+import textContent from './textExtractor';
 import { googleSearch, baiduSearch } from './action';
 
 const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
@@ -16,6 +17,7 @@ const BLOCK_TAG = [
   'script',
   'style',
   'link',
+  'noscript',
 ];
 
 const BLOCK_CLASSNAMES = ['bb-stage-wp'];
@@ -32,7 +34,8 @@ const option = {
   },
   actionKey: KEY_ALT,
   defaultJoinChar: ' ',
-  delay: 500,
+  dumpActionDelay: 400, // ms
+  smartActionDelay: 300,
 };
 
 let clientX;
@@ -41,7 +44,8 @@ let clientY;
 // eslint-disable-next-line no-unused-vars
 const state = {
   curTask: null,
-  isActive: false, // 被激活,
+  willActive: false, // 将被激活，当前等价于 triggerKey 被按下
+  isActive: false, // 被激活, app 视图出现
   onAction: false, // 是否处于动作面版
   selectedTexts: [], // 选择的文字
   searchEngine: null,
@@ -115,13 +119,52 @@ function update_mouse_pos(event) {
 }
 
 function clearPreviousState() {
+  state.curTask = null;
   state.selectedTexts = [];
   state.searchEngine = null,
   state.joinChar = option.defaultJoinChar;
 }
 
+function textNode(node) {
+  return {
+    text: textContent(node),
+    node,
+  };
+}
+
+function activate() {
+  clearPreviousState();
+
+  const curNode = document.elementFromPoint(clientX, clientY);
+  const words = traversDownNode(curNode).map(textNode).filter(({ text }) =>
+    text !== '' /* none empty textnode */
+  );
+  
+  if (!words.length) {
+    // 没有文字可以选择，什么都不做
+  } else if (words.length === 1) {
+    // 只有一段可选择文字，进入smart mode
+    const word = words[0];
+    copyTextToClipboard(word.text);
+
+    // ui提示用户当前被复制的文字
+    hint(word.node, option.dumpActionDelay);
+
+    // 一定时间后，用户没有取消，进入full mode
+    state.curTask = setTimeout(() => show({ words }), option.dumpActionDelay);
+  } else {
+    // 进入full mode
+    show({ words });
+  }
+  // const words = textnodes.map(getNodeText);
+
+  state.willActive = false; // already active so set to false
+  state.isActive = true;
+}
+
 // 退出视图
 function quit() {
+  state.willActive = false;
   state.isActive = false;
   state.onAction = false;
 
@@ -157,9 +200,7 @@ function quit() {
 }
 
 function keyDown(event) {
-  if (state.curTask) {
-    return;
-  }
+  // 已经激活 app
 
   if (state.isActive) { // 已经激活
     if (!state.onAction && isActionKey(event.keyCode)) {
@@ -173,18 +214,15 @@ function keyDown(event) {
   }
 
   if (isTriggerKey(event.keyCode)) {
-    state.curTask = setTimeout(() => {
-      clearPreviousState();
-
-      const curNode = document.elementFromPoint(clientX, clientY);
-      const words = traversDownNode(curNode).map(getNodeText).filter(text =>
-        text !== '' /* none empty textnode */
-      );
-      // const words = textnodes.map(getNodeText);
-      show({ words });
-      state.isActive = true;
-      state.curTask = null;
-    }, option.delay);
+    state.willActive = true;
+    if (!state.curTask) {
+      state.curTask = setTimeout(activate, option.smartActionDelay);
+    }
+  } else {
+    // other key down, indicate a another key combination
+    if (state.willActive) {
+      quit(); // stop trigger self, just quit
+    }
   }
 }
 

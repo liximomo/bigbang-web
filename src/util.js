@@ -26,10 +26,6 @@ export function createELement(string) {
   return el;
 }
 
-export function getNodeText(node) {
-  return textContent(node);
-}
-
 export function on(elSelector, eventName, selector, handler, useCapture) {
   const _useCapture = useCapture === undefined ? false : useCapture;
   const elements = document.querySelectorAll(elSelector);

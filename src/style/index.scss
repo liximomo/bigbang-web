@@ -133,7 +133,7 @@ $actino-sheet-action-color: rgba(125, 98, 98, 0.73);
   }
 
   .busy {
-    animation-name: pulse;
+    animation-name: bbPulse;
     animation-fill-mode: both;
     animation-timing-function: ease-in-out;
     animation-duration: 1.2s;
@@ -142,13 +142,34 @@ $actino-sheet-action-color: rgba(125, 98, 98, 0.73);
 
   .shake {
     animation-timing-function: ease-in-out;
-    animation-name: headShake;
+    animation-name: bbHeadShake;
     animation-duration: 0.6s;
     animation-fill-mode: both;
   }
 }
 
-@keyframes headShake {
+.bb-hint {
+  // background-image: linear-gradient(#FFEB3B, #FFEB3B);
+  // background-image: linear-gradient(to left, #DAE2F8, #D6A4A4);
+  // background-repeat: no-repeat;
+  // background-position: 50% 100%;
+  animation-timing-function: ease-in !important;
+  animation-name: bbFade !important;
+  background-image: none !important;
+}
+
+@keyframes bbFade {
+  0% {
+    background-color: #F6B425;
+    // background-size: 100% 2px;
+  }
+  100% {
+    background-color: white;
+    // background-size: 0 2px;
+  }
+}
+
+@keyframes bbHeadShake {
   0% {
     transform: translateX(0);
   }
@@ -169,7 +190,7 @@ $actino-sheet-action-color: rgba(125, 98, 98, 0.73);
   }
 }
 
-@keyframes pulse {
+@keyframes bbPulse {
   from {
     transform: scale3d(1, 1, 1);
   }

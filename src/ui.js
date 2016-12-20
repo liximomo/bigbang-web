@@ -96,9 +96,9 @@ function getWord(wordSpan) {
 }
 
 function words2HtmlText(words, activeIndex = 0) {
-  return words.map((word, index) =>
+  return words.map((text, index) =>
     wordV({
-      text: word,
+      text: text,
       selected: index === activeIndex,
     })
   ).join('');
@@ -191,6 +191,18 @@ function getAllSelectText() {
 
 export { getWord };
 
+export function hint(node, duration, cb) {
+  // clear value
+  let containerNode = node;
+  if (node.nodeType === 3) {
+    containerNode = node.parentNode;
+  }
+
+  containerNode.style.animationDuration = `${duration/1000}s`;
+  containerNode.classList.add('bb-hint');
+  containerNode.addEventListener('animationend', () => containerNode.classList.remove('bb-hint'), false);
+}
+
 export function actionOn(opt) {
   // clear value
   resetAction();
@@ -206,7 +218,7 @@ export function actionOff() {
 }
 
 export function show({ words }) {
-  wordsView.innerHTML = words2HtmlText(words);
+  wordsView.innerHTML = words2HtmlText(words.map(word => word.text));
   stageWrapper.classList.add('is-active');
 }
 
