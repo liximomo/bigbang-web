@@ -22,3 +22,7 @@ smartisan bigbang on the web!
 ```
   yarn run build
 ```
+
+## TODO
+- [ ] node extractor (not only text)
+- [ ] node render (diverse node view)

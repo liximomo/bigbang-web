@@ -8,6 +8,8 @@ $actino-sheet-action-color: rgba(125, 98, 98, 0.73);
 
 .bb-stage-wp {
   position: relative;
+  font-size: 16px !important;
+  color: #000 !important;
 
   .bb-stage {
     opacity: 0;
@@ -56,6 +58,7 @@ $actino-sheet-action-color: rgba(125, 98, 98, 0.73);
     left: 50%;
     transform: translate3d(-50%, -50%, 0);
     max-width: 800px;
+    max-height: 100%;
   }
 
   .bb-word {

@@ -35,7 +35,7 @@ const option = {
   actionKey: KEY_ALT,
   defaultJoinChar: ' ',
   dumpActionDelay: 400, // ms
-  smartActionDelay: 300,
+  smartActionDelay: 350,
 };
 
 let clientX;
@@ -230,8 +230,11 @@ function keyUp(event) {
   }
 }
 
-//  can't copy success when window on blur because it's impossible to create selection
-// window.addEventListener('blur', quit, false);
+
+if (process.env.NODE_ENV === 'production') {
+  // auto quit when lose focus
+  window.addEventListener('blur', quit, false);
+}
 
 document.addEventListener('mousemove', update_mouse_pos, false);
 document.addEventListener('keyup', keyUp, false);
