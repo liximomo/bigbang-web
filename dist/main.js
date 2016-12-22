@@ -9,7 +9,7 @@
 // @run-at       document-end
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
-// @connect      wordsegment-153208.appspot.com/
+// @connect      wordsegment-153208.appspot.com
 // ==/UserScript==
 
 /******/ (function(modules) { // webpackBootstrap

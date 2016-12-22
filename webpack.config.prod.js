@@ -74,7 +74,7 @@ const config = {
         '// @run-at       document-end\n' +
         '// @grant        GM_xmlhttpRequest\n' +
         '// @grant        GM_setClipboard\n' +
-        '// @connect      wordsegment-153208.appspot.com/\n' +
+        '// @connect      wordsegment-153208.appspot.com\n' +
         '// ==/UserScript==\n',
       raw: true,
       entryOnly: true,
