@@ -87,7 +87,7 @@
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__textExtractor__ = __webpack_require__(1);
 /* harmony export (immutable) */ exports["d"] = param;
-/* harmony export (immutable) */ exports["e"] = flatten;
+/* unused harmony export flatten */
 /* harmony export (immutable) */ exports["b"] = createELement;
 /* harmony export (immutable) */ exports["c"] = on;
 /* harmony export (immutable) */ exports["a"] = copyTextToClipboard;
@@ -512,7 +512,7 @@ function googleSearch(text) {
 
 "use strict";
 var api_key = 'h9s2c4R62DjucGFfLpdfiyuK0pPMyoicLw3PAOhC';
-/* harmony default export */ exports["a"] = api_key;
+/* unused harmony default export */ var _unused_webpack_default_export = api_key;
 
 /***/ },
 /* 5 */
@@ -528,43 +528,18 @@ var api_key = 'h9s2c4R62DjucGFfLpdfiyuK0pPMyoicLw3PAOhC';
 
 var isProd = "production" === 'production';
 
-var service_host = 'http://api.ltp-cloud.com/analysis/';
+var service_host = 'https://wordsegment-153208.appspot.com/ws';
 
 var TIMEOUT = 1000 * 3;
 
-var head = document.getElementsByTagName('head')[0];
 function callApi(url, params, cb) {
   if (isProd) {
     xhr(url, params, cb);
     return;
+  } else {
+    // 无法跨域访问，模拟调用成功
+    return cb(null, params.text.split(''));
   }
-
-  var err = null;
-  var timeout = null;
-
-  var urlParam = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["d" /* param */])(Object.assign({}, params, {
-    callback: 'ltpCloudCallback'
-  }));
-  window.ltpCloudCallback = data => cb(null, data);
-  var script = document.createElement('script');
-  var callbackWrapper = cb => () => {
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-    head.removeChild(script);
-    cb && cb();
-  };
-  script.onload = callbackWrapper();
-  script.onerror = callbackWrapper(() => cb(new Error('fail')));
-  timeout = setTimeout(() => {
-    window.ltpCloudCallback = a => null;
-    script.onload = null;
-    script.onerror = null;
-    head.removeChild(script);
-    cb(new Error('timeout'));
-  }, TIMEOUT);
-  script.setAttribute('src', `${ url }?${ urlParam }`);
-  head.appendChild(script);
 }
 
 function xhr(url, params, cb) {
@@ -588,11 +563,8 @@ function xhr(url, params, cb) {
 
 function wordSegment(text, cb) {
   callApi(service_host, {
-    api_key: __WEBPACK_IMPORTED_MODULE_1__api_key__["a" /* default */],
-    text,
-    pattern: 'ws',
-    format: 'json'
-  }, (err, paragraphs) => err ? cb(err) : cb(null, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__util__["e" /* flatten */])(paragraphs).map(word => word.cont)));
+    text
+  }, (err, words) => err ? cb(err) : cb(null, words));
 }
 
 /***/ },

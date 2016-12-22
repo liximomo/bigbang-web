@@ -4,44 +4,18 @@ import api_key from './api_key';
 
 const isProd = process.env.NODE_ENV === 'production';
 
-const service_host = 'http://api.ltp-cloud.com/analysis/';
+const service_host = 'https://wordsegment-153208.appspot.com/ws';
 
 const TIMEOUT = 1000 * 3;
 
-const head = document.getElementsByTagName('head')[0];
 function callApi(url, params, cb) {
   if (isProd) {
     xhr(url, params, cb);
     return;
+  } else {
+    // 无法跨域访问，模拟调用成功
+    return cb(null, params.text.split(''));
   }
-
-  let err = null;
-  let timeout = null;
-  
-  const urlParam = param({
-    ...params,
-    callback: 'ltpCloudCallback',
-  });
-  window.ltpCloudCallback = data => cb(null, data);
-  const script = document.createElement('script');
-  const callbackWrapper = (cb) => () => {
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-    head.removeChild(script);
-    cb && cb();
-  }
-  script.onload = callbackWrapper();
-  script.onerror = callbackWrapper(() => cb(new Error('fail')));
-  timeout = setTimeout(() => {
-    window.ltpCloudCallback = a => null;
-    script.onload = null;
-    script.onerror = null;
-    head.removeChild(script);
-    cb(new Error('timeout'));
-  }, TIMEOUT);
-  script.setAttribute('src', `${url}?${urlParam}`);
-  head.appendChild(script);
 }
 
 function xhr(url, params, cb) {
@@ -65,11 +39,8 @@ function xhr(url, params, cb) {
 
 export function wordSegment(text, cb) {
   callApi(service_host, {
-    api_key,
     text,
-    pattern: 'ws',
-    format: 'json',
-  }, (err, paragraphs) =>
-    err ? cb(err) : cb(null, flatten(paragraphs).map(word => word.cont))
+  }, (err, words) =>
+    err ? cb(err) : cb(null, words)
   )
 }
