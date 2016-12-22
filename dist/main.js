@@ -2,14 +2,14 @@
 // @name         big-bang
 // @homepageURL  https://github.com/liximomo/bigbang-web
 // @namespace    http://tampermonkey.net/
-// @version      1.0.3
+// @version      1.0.4
 // @description  bigbang word segment and smart copy
 // @author       liximomo
 // @match        http*://*/*
 // @run-at       document-end
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
-// @connect      api.ltp-cloud.com
+// @connect      wordsegment-153208.appspot.com/
 // ==/UserScript==
 
 /******/ (function(modules) { // webpackBootstrap

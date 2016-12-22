@@ -67,14 +67,14 @@ const config = {
         '// @name         big-bang\n' +
         '// @homepageURL  https://github.com/liximomo/bigbang-web\n' +
         '// @namespace    http://tampermonkey.net/\n' +
-        '// @version      1.0.3\n' +
+        '// @version      1.0.4\n' +
         '// @description  bigbang word segment and smart copy\n' +
         '// @author       liximomo\n' +
         '// @match        http*://*/*\n' +
         '// @run-at       document-end\n' +
         '// @grant        GM_xmlhttpRequest\n' +
         '// @grant        GM_setClipboard\n' +
-        '// @connect      api.ltp-cloud.com\n' +
+        '// @connect      wordsegment-153208.appspot.com/\n' +
         '// ==/UserScript==\n',
       raw: true,
       entryOnly: true,
