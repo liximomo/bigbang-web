@@ -1,7 +1,5 @@
 /* global */
-import './style/index.scss';
-
-import { show, hide, hint, actionOn, actionOff } from './ui';
+import { prepareView, show, hide, hint, actionOn, actionOff } from './ui';
 import { copyTextToClipboard } from './util';
 import textContent from './textExtractor';
 import { googleSearch, baiduSearch } from './action';
@@ -34,8 +32,8 @@ const option = {
   },
   actionKey: KEY_ALT,
   defaultJoinChar: ' ',
-  dumpActionDelay: 400, // ms
-  smartActionDelay: 350,
+  dumpActionDelay: 1200, // ms
+  smartActionDelay: 300,
 };
 
 let clientX;

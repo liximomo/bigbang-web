@@ -15,7 +15,10 @@ export function flatten(array) {
 // dom
 export function createELement(string) {
   const wpEL = document.createElement('div');
-  wpEL.innerHTML = string.trim();
+  
+  // remove line breaks from start and end of string
+  // trim isn't reliable 
+  wpEL.innerHTML = string.replace(/^\s+|\s+$/g, '');
   let el;
   if (wpEL.childNodes.length === 1) {
     el = wpEL.childNodes[0];

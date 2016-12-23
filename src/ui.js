@@ -1,6 +1,16 @@
 import { createELement, on } from './util';
 import { wordSegment } from './service';
 
+let stageWrapper;
+let wordsView;
+let actionStage;
+let actionView;
+
+let isRequsetPending = false;
+
+// action value
+const actinoStatus = {};
+
 const stageV = `
 <div class='bb-stage-wp'>
   <div class='bb-stage bb-stage--content'>
@@ -21,14 +31,14 @@ const actionSheetV = () => `
     <span class="pickle action action-join" data-char="\n">行分割</span>
   </div>
   <div class="bb-action__menu-wp">
-    <div class="bb-action__menu-item action action-search action-cancel" data-se="@null" >
-      cancel
-    </div>
     <div class="bb-action__menu-item action action-search" data-se="gg" >
       谷歌
     </div>
     <div class="bb-action__menu-item action action-search" data-se="bd" >
       百度
+    </div>
+    <div class="bb-action__menu-item action action-search action-cancel" data-se="@null" >
+      cancel
     </div>
   </div>
 </div>
@@ -37,12 +47,6 @@ const actionSheetV = () => `
 const wordV = (props) => `
 <span class="bb-word ${props.selected ? 'is-selected' : ''}">${props.text}</span>
 `;
-
-const stageWrapper = createELement(stageV);
-// const stage = stageWrapper.querySelector('.bb-stage.bb-stage--content');
-const wordsView = stageWrapper.querySelector('.bb-view--words');
-const actionStage = stageWrapper.querySelector('.bb-stage--action');
-const actionView = stageWrapper.querySelector('.bb-view--action');
 
 function getPosition2Document(e) {
   let posx = 0;
@@ -89,6 +93,56 @@ function positonMenu(x, y, menu) {
 }
 /* eslint-enable no-param-reassign */
 
+function resetAction() {
+  actinoStatus.joinChar = ' ';
+  actinoStatus.searchEngine = null;
+  actionView.innerHTML = actionSheetV();
+}
+
+// bind event
+function bindEvent() {
+  on('.bb-view--words', 'click', '.bb-word', function() {
+    this.classList.toggle('is-selected');
+  }, false);
+
+
+  on('.bb-view--words', 'contextmenu', '.bb-word', function(event) {
+    event.preventDefault();
+    if (isRequsetPending) {
+      return;
+    }
+    isRequsetPending = true;
+    wordSegmentBusy(this);
+    wordSegment(getWord(this), (err, words) => {
+      wordSegmentDone(this);
+      isRequsetPending = false;
+      if (err) {
+        wordSegmentFail(this);
+        return;
+      }
+      bigbang(wordsView, this, words);
+    });
+  }, false);
+
+  on('.bb-view--action', 'mouseover', '.action-join', function() {
+    const cur = this;
+    Array.prototype.filter.call(actionView.querySelectorAll('.action-join'), action =>
+      action !== cur
+    ).forEach(action => action.classList.remove('active'));
+    cur.classList.add('active');
+    actinoStatus.joinChar = cur.dataset.char;
+  }, false);
+
+  on('.bb-view--action', 'mouseover', '.action-search', function() {
+    const cur = this;
+    Array.prototype.filter.call(actionView.querySelectorAll('.action-search'), action =>
+      action !== cur
+    ).forEach(action => action.classList.remove('active'));
+    cur.classList.add('active');
+    actinoStatus.searchEngine = cur.dataset.se;
+  }, false);
+}
+
 function getWord(wordSpan) {
   return wordSpan.textContent;
 }
@@ -127,64 +181,16 @@ function bigbang(wordsContainer, textSpan, words) {
   textSpan.parentNode.removeChild(textSpan);
 }
 
-document.body.appendChild(stageWrapper);
-
-// bind event
-on('.bb-view--words', 'click', '.bb-word', function() {
-  this.classList.toggle('is-selected');
-}, false);
-
-let isRequsetPending = false;
-on('.bb-view--words', 'contextmenu', '.bb-word', function(event) {
-  event.preventDefault();
-  if (isRequsetPending) {
-    return;
-  }
-  isRequsetPending = true;
-  wordSegmentBusy(this);
-  wordSegment(getWord(this), (err, words) => {
-    wordSegmentDone(this);
-    isRequsetPending = false;
-    if (err) {
-      wordSegmentFail(this);
-      return;
-    }
-    bigbang(wordsView, this, words);
-  });
-}, false);
-
-// action value
-const actinoStatus = {};
-
-function resetAction() {
-  actinoStatus.joinChar = ' ';
-  actinoStatus.searchEngine = null;
-  actionView.innerHTML = actionSheetV();
-}
-
-// event bind
-on('.bb-view--action', 'mouseover', '.action-join', function() {
-  const cur = this;
-  Array.prototype.filter.call(actionView.querySelectorAll('.action-join'), action =>
-    action !== cur
-  ).forEach(action => action.classList.remove('active'));
-  cur.classList.add('active');
-  actinoStatus.joinChar = cur.dataset.char;
-}, false);
-
-on('.bb-view--action', 'mouseover', '.action-search', function() {
-  const cur = this;
-  Array.prototype.filter.call(actionView.querySelectorAll('.action-search'), action =>
-    action !== cur
-  ).forEach(action => action.classList.remove('active'));
-  cur.classList.add('active');
-  actinoStatus.searchEngine = cur.dataset.se;
-}, false);
-
 function getAllSelectText() {
   const selectedTexts = stageWrapper.querySelectorAll('.bb-word.is-selected');
   const selectedTextArray = Array.prototype.slice.call(selectedTexts).map(getWord);
   return selectedTextArray;
+}
+
+function injectStyleString(str) {
+  const node = document.createElement('style');
+  node.innerHTML = str;
+  document.head.appendChild(node);
 }
 
 export { getWord };
@@ -199,6 +205,21 @@ export function hint(node, duration, cb) {
   containerNode.style.animationDuration = `${duration/1000}s`;
   containerNode.classList.add('bb-hint');
   containerNode.addEventListener('animationend', () => containerNode.classList.remove('bb-hint'), false);
+}
+
+export function prepareView() {
+  const isExist = document.querySelector('.bb-stage-wp');
+  if (isExist) {
+    return; 
+  }
+  const style = require('./style/index.scss');
+  injectStyleString(style[0][1]);
+  stageWrapper = createELement(stageV);
+  wordsView = stageWrapper.querySelector('.bb-view--words');
+  actionStage = stageWrapper.querySelector('.bb-stage--action');
+  actionView = stageWrapper.querySelector('.bb-view--action');
+  document.body.appendChild(stageWrapper);
+  bindEvent();
 }
 
 export function actionOn(opt) {
@@ -216,6 +237,7 @@ export function actionOff() {
 }
 
 export function show({ words }) {
+  prepareView();
   wordsView.innerHTML = words2HtmlText(words.map(word => word.text));
   stageWrapper.classList.add('is-active');
 }

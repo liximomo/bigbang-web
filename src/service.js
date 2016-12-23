@@ -6,7 +6,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 const service_host = 'https://wordsegment-153208.appspot.com/ws';
 
-const TIMEOUT = 1000 * 3;
+const TIMEOUT = 1000 * 6;
 
 function callApi(url, params, cb) {
   if (isProd) {
