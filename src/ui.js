@@ -243,8 +243,8 @@ export function show({ words }) {
 }
 
 export function hide() {
-  if (!stageWrapper) return;
-  
+  if (!stageWrapper) return [];
+
   stageWrapper.classList.remove('is-active');
   const selectedTextArray = getAllSelectText();
   wordsView.innerHTML = '';

@@ -822,7 +822,7 @@ function show(_ref) {
 }
 
 function hide() {
-  if (!stageWrapper) return;
+  if (!stageWrapper) return [];
 
   stageWrapper.classList.remove('is-active');
   var selectedTextArray = getAllSelectText();
