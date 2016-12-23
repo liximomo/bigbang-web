@@ -2,7 +2,7 @@
 // @name         big-bang
 // @homepageURL  https://github.com/liximomo/bigbang-web
 // @namespace    http://tampermonkey.net/
-// @version      1.0.5
+// @version      1.0.6
 // @description  bigbang word segment and smart copy
 // @author       liximomo
 // @match        http*://*/*
@@ -822,6 +822,8 @@ function show(_ref) {
 }
 
 function hide() {
+  if (!stageWrapper) return;
+
   stageWrapper.classList.remove('is-active');
   var selectedTextArray = getAllSelectText();
   wordsView.innerHTML = '';

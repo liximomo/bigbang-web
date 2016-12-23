@@ -66,7 +66,7 @@ const config = {
         '// @name         big-bang\n' +
         '// @homepageURL  https://github.com/liximomo/bigbang-web\n' +
         '// @namespace    http://tampermonkey.net/\n' +
-        '// @version      1.0.5\n' +
+        '// @version      1.0.6\n' +
         '// @description  bigbang word segment and smart copy\n' +
         '// @author       liximomo\n' +
         '// @match        http*://*/*\n' +
