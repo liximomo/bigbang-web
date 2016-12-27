@@ -220,7 +220,7 @@ function keyDown(event) {
 function keyUp(event) {
   if (isTriggerKey(event.keyCode)) {
     quit();
-  } else if (isActionKey(event.keyCode)) {
+  } else if (state.isActive && isActionKey(event.keyCode)) {
     state.onAction = false;
     const actionInfo = actionOff();
     state.joinChar = actionInfo.joinChar;

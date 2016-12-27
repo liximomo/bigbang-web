@@ -2,7 +2,7 @@
 // @name         big-bang
 // @homepageURL  https://github.com/liximomo/bigbang-web
 // @namespace    http://tampermonkey.net/
-// @version      1.0.6
+// @version      1.0.7
 // @description  bigbang word segment and smart copy
 // @author       liximomo
 // @match        http*://*/*
@@ -461,7 +461,7 @@ function keyDown(event) {
 function keyUp(event) {
   if (isTriggerKey(event.keyCode)) {
     quit();
-  } else if (isActionKey(event.keyCode)) {
+  } else if (state.isActive && isActionKey(event.keyCode)) {
     state.onAction = false;
     var actionInfo = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__ui__["e" /* actionOff */])();
     state.joinChar = actionInfo.joinChar;
